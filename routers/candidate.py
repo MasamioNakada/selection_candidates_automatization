@@ -3,8 +3,7 @@ from fastapi import File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from typing import Optional, Annotated
-
+from typing import Optional
 
 router = APIRouter(prefix="/candidates")
 
