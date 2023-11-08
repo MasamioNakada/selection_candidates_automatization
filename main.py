@@ -3,10 +3,11 @@ import uvicorn
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 
-from routers import candidate
+from routers import candidate, positions
 
 app = FastAPI()
 app.include_router(candidate.router)
+app.include_router(positions.router)
 
 @app.get("/")
 def home():

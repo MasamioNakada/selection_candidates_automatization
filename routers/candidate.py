@@ -1,14 +1,28 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from fastapi import File, UploadFile, Form
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+
+import utils
+import models
+import squema
+import crud
+from sqlalchemy.orm import Session
+from database import SessionLocal, engine
 
 from typing import Optional
 
+models.Base.metadata.create_all(bind=engine)
+
 router = APIRouter(prefix="/candidates")
 
-class Candidate(BaseModel):
-    first_name : str
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @router.get("/positions")
 async def positions():
@@ -46,14 +60,33 @@ async def create_user(
     last_name : str = Form(...),
     gender : Optional[str|None] = Form(default=None),
     email : str = Form(...) ,
+    country_code : Optional[str|None] = Form(default=None),
     phone_number : str = Form(...),
     cv : UploadFile = File(...),
-    cover_letter : Optional[str|None] = Form(default=None)
-):
-    #insert to database
-    print(first_name)
+    cover_letter : Optional[str|None] = Form(default=None),
+    db:Session = Depends(get_db)
+):  
+    cv_path = f"{first_name}_{last_name}_{utils.rand_string()}.pdf"
+    candidate = squema.Candidate(
+        first_name=first_name,
+        middle_name=middle_name,
+        last_name = last_name,
+        gender = gender,
+        email = email,
+        country_code = country_code,
+        phone_number = phone_number,
+        cover_letter = cover_letter,
+        id_position = form_id,
+        cv_path = cv_path
+    )
 
-    with open(cv.filename,"wb") as f:
-        f.write(cv.file.read())
+    #insert to database
+    crud.upload_file(cv,name=cv_path)
     cv.file.close()
+    db_candidate = crud.create_candidate(db,candidate)
+    
     return JSONResponse({"status":"Form successfully"}, status_code=status.HTTP_200_OK)
+
+@router.get("/all")
+async def get_user(db: Session = Depends(get_db)):
+    return crud.get_candidates(db)

@@ -1,4 +1,7 @@
-fastapi
-pydantic
-uvicorn
+boto3==1.28.80
+fastapi==0.104.1
+pydantic==1.10.5
+python-dotenv==1.0.0
+SQLAlchemy==1.4.46
+uvicorn==0.24.0.post1
 python-multipart
