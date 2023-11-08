@@ -5,3 +5,4 @@ python-dotenv==1.0.0
 SQLAlchemy==1.4.46
 uvicorn==0.24.0.post1
 python-multipart
+mysql-connector-python==8.2.0
