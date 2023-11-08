@@ -9,7 +9,7 @@ load_dotenv()
 user = os.getenv("USER")
 password = os.getenv("PASSWORD")
 server = os.getenv("SERVER")
-port = os.getenv("PORT")
+port = os.getenv("PORTS")
 database = os.getenv("DATABASE")
 
 SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{user}:{password}@{server}:{port}/{database}"
